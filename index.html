@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblioteca Sonora · 5.º e 6.º Ano</title>
+  <title>OP 2.º Ciclo · Biblioteca</title>
   <meta name="description" content="Histórias em áudio para alunos do 5.º e 6.º ano, com modo Ler e Ouvir, vozes naturais em Português de Portugal e gestão simples para o professor." />
   <meta name="theme-color" content="#1E4D40" />
   <link rel="manifest" href="./manifest.json" />
@@ -28,7 +28,7 @@
           </svg>
         </div>
         <div>
-          <h1 id="classTitle">Biblioteca Sonora</h1>
+          <h1 id="classTitle">OP 2.º Ciclo · Biblioteca</h1>
           <p id="classSubtitle" class="brand-subtitle">Escolhe o teu ano, põe os auscultadores e deixa a imaginação viajar.</p>
         </div>
       </div>
@@ -59,8 +59,8 @@
     <!-- Welcome / Grade Selection Menu -->
     <section id="homeMenu" class="home-menu" aria-label="Escolher ano escolar">
       <div class="home-hero">
-        <span class="home-kicker">2.º Ciclo · Histórias em Áudio</span>
-        <h2>Escolhe a tua Biblioteca Sonora</h2>
+        <span class="home-kicker">OP 2.º Ciclo · Histórias em Áudio</span>
+        <h2>Escolhe a tua Biblioteca</h2>
         <p>Seleciona o teu ano para ouvires histórias com vozes naturais de Portugal, acompanhamento de texto e zero distrações.</p>
       </div>
 
@@ -133,7 +133,7 @@
 
     <!-- Subtle Footer -->
     <footer class="app-footer">
-      <p>Biblioteca Sonora · 5.º e 6.º Ano · Sem anúncios · Feito para ouvir com calma 🎧</p>
+      <p>OP 2.º Ciclo · Biblioteca (5.º e 6.º Ano) · Sem anúncios · Feito para ouvir com calma 🎧</p>
     </footer>
   </div>
 
@@ -258,7 +258,7 @@
       </div>
       <form id="pinForm" class="pin-form">
         <p class="muted">Introduz o código PIN para adicionar ou editar histórias da turma.</p>
-        <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="PIN (predefinido: 5000)" autocomplete="off" required />
+        <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="Introduz o PIN" autocomplete="off" required />
         <p id="pinError" class="error-text hidden">Código incorreto. Tenta novamente.</p>
         <div class="form-actions">
           <button type="button" class="btn btn-ghost" id="btnCancelPin">Cancelar</button>
@@ -444,8 +444,8 @@
                 <input type="text" id="settingClassTitle" placeholder="Biblioteca Sonora · 5.º A" />
               </label>
               <label class="field">
-                <span>PIN do Professor</span>
-                <input type="text" id="settingPin" inputmode="numeric" maxlength="8" placeholder="5000" />
+                <span>Alterar PIN do Professor</span>
+                <input type="password" id="settingPin" inputmode="numeric" maxlength="8" placeholder="Novo PIN (mín. 4 dígitos)" autocomplete="new-password" />
               </label>
             </div>
             <label class="field">

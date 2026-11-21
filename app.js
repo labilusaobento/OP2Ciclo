@@ -5,7 +5,7 @@
 
   // ---- Fallback catalog (used if opened via file:// where fetch may be blocked) ----
   const FALLBACK_CATALOG = {
-    classTitle: 'Biblioteca Sonora · 5.º Ano',
+    classTitle: 'OP 2.º Ciclo · Biblioteca',
     classSubtitle: 'Escolhe uma história, põe os auscultadores e deixa a imaginação viajar.',
     stories: [
       {
@@ -98,7 +98,17 @@
   };
 
   const CATEGORIES = ['Todas', 'Inspiração', 'História', 'Aventura', 'Lendas', 'Mistério', 'Calma', 'Poesia', 'Vozes da Turma', '⭐ Favoritas'];
-  const DEFAULT_PIN = '5000';
+  const DEFAULT_PIN_HASH = '3a68daab953450e426f8b946bef1642534c1c3eec54599aa7bea507f0e6e899d';
+
+  async function hashPin(pin) {
+    const raw = `bs2c-pin:${String(pin || '').trim()}`;
+    if (window.crypto && window.crypto.subtle) {
+      const buf = new TextEncoder().encode(raw);
+      const digest = await window.crypto.subtle.digest('SHA-256', buf);
+      return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    return '';
+  }
 
   // ---- IndexedDB wrapper for local teacher stories & audio blobs ----
   const DB_NAME = 'BibliotecaSonora5AnoDB';
@@ -155,9 +165,9 @@
 
   // ---- Application State ----
   const state = {
-    classTitle: 'Biblioteca Sonora',
+    classTitle: 'OP 2.º Ciclo · Biblioteca',
     classSubtitle: 'Escolhe o teu ano, põe os auscultadores e deixa a imaginação viajar.',
-    pin: DEFAULT_PIN,
+    pinHash: DEFAULT_PIN_HASH,
     stories: [],
     activeGrade: null, // null = home menu, '5' = 5.º Ano, '6' = 6.º Ano
     selectedCategory: 'Todas',
@@ -530,13 +540,13 @@
       state.stories = merged;
       state.classTitle = localOverride.classTitle || base.classTitle || FALLBACK_CATALOG.classTitle;
       state.classSubtitle = localOverride.classSubtitle || base.classSubtitle || FALLBACK_CATALOG.classSubtitle;
-      state.pin = localOverride.pin || DEFAULT_PIN;
+      state.pinHash = localOverride.pinHash || base.pinHash || DEFAULT_PIN_HASH;
       state.deletedIds = deletedSet;
     } else {
       state.stories = [...base.stories];
       state.classTitle = base.classTitle || FALLBACK_CATALOG.classTitle;
       state.classSubtitle = base.classSubtitle || FALLBACK_CATALOG.classSubtitle;
-      state.pin = base.pin || DEFAULT_PIN;
+      state.pinHash = base.pinHash || DEFAULT_PIN_HASH;
       state.deletedIds = new Set();
     }
 
@@ -605,7 +615,7 @@
     const payload = {
       classTitle: state.classTitle,
       classSubtitle: state.classSubtitle,
-      pin: state.pin,
+      pinHash: state.pinHash,
       stories: state.stories,
       deletedIds: [...(state.deletedIds || [])]
     };
@@ -614,7 +624,7 @@
 
   // ---- Rendering ----
   function renderHeader() {
-    const baseTitle = (state.classTitle || 'Biblioteca Sonora').replace(/\s*·\s*5\.º\s*Ano/i, '').trim() || 'Biblioteca Sonora';
+    const baseTitle = (state.classTitle || 'OP 2.º Ciclo · Biblioteca').replace(/\s*·\s*5\.º\s*Ano/i, '').trim() || 'OP 2.º Ciclo · Biblioteca';
     if (state.activeGrade) {
       const title = `${baseTitle} · ${state.activeGrade}.º Ano`;
       dom.classTitle.textContent = title;
@@ -1057,7 +1067,10 @@
   function openTeacherModal() {
     dom.settingClassTitle.value = state.classTitle;
     dom.settingClassSubtitle.value = state.classSubtitle;
-    dom.settingPin.value = state.pin;
+    dom.settingPin.value = '';
+    if (dom.inputGrade && !dom.editingStoryId.value) {
+      dom.inputGrade.value = state.activeGrade || '5';
+    }
     renderManageList();
     dom.teacherModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -1578,9 +1591,10 @@
       if (e.target === dom.pinModal) closePinModal();
     });
 
-    dom.pinForm.addEventListener('submit', e => {
+    dom.pinForm.addEventListener('submit', async e => {
       e.preventDefault();
-      if (dom.pinInput.value.trim() === state.pin) {
+      const enteredHash = await hashPin(dom.pinInput.value);
+      if (enteredHash && enteredHash === state.pinHash) {
         closePinModal();
         openTeacherModal();
       } else {
@@ -1631,10 +1645,14 @@
       state.classTitle = dom.settingClassTitle.value.trim() || FALLBACK_CATALOG.classTitle;
       state.classSubtitle = dom.settingClassSubtitle.value.trim() || FALLBACK_CATALOG.classSubtitle;
       const newPin = dom.settingPin.value.trim();
-      if (newPin.length >= 4) state.pin = newPin;
+      if (newPin.length >= 4) {
+        const hashed = await hashPin(newPin);
+        if (hashed) state.pinHash = hashed;
+        dom.settingPin.value = '';
+      }
       await persistTeacherCatalog();
       renderHeader();
-      showToast('Definições da turma guardadas!');
+      showToast('Definições guardadas com sucesso!');
     });
 
     // Home menu & Grade navigation
