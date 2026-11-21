@@ -674,7 +674,7 @@
       dom.storiesGrid.innerHTML = '';
       dom.emptyState.classList.remove('hidden');
       if (gradeTotal === 0 && state.activeGrade) {
-        dom.emptyStateTitle.textContent = `Biblioteca Sonora · ${state.activeGrade}.º Ano pronta!`;
+        dom.emptyStateTitle.textContent = `Biblioteca · ${state.activeGrade}.º Ano pronta!`;
         dom.emptyStateDesc.textContent = `Ainda não foram adicionadas histórias ao ${state.activeGrade}.º ano. Em breve o professor vai publicar as primeiras histórias aqui.`;
         dom.btnResetFilters.classList.add('hidden');
       } else {
